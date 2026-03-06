@@ -43,18 +43,18 @@ export default function Frame({ project, position, rotation, onClick, isActive }
       </mesh>
 
       {/* The Screen (Image placeholder replaced with actual Texture or custom Pricing UI) */}
-      <mesh position={[0, 0, 0.151]}>
+      <mesh position={[0, 0, 0.17]}>
         <planeGeometry args={[3, 4]} />
         {project.isPricing ? (
-          <meshBasicMaterial color="#111111" />
+          <meshBasicMaterial color="#111111" polygonOffset polygonOffsetFactor={-1} />
         ) : (
-          <meshBasicMaterial map={texture} />
+          <meshBasicMaterial map={texture} polygonOffset polygonOffsetFactor={-1} />
         )}
       </mesh>
 
       {/* Internal Text for Pricing Card */}
       {project.isPricing && (
-        <group position={[0, 0, 0.152]}>
+        <group position={[0, 0, 0.171]}>
           <Text fontSize={0.5} position={[0, 0.4, 0]} color="#fbbf24" anchorX="center" anchorY="middle" letterSpacing={0.05} font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfAZ9hjp-Ek-_EeA.woff">
             SERVICIOS
           </Text>
