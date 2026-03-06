@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Text, useCursor, useTexture, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { playHoverSound, playClickSound } from '../utils/audio'
@@ -9,6 +9,8 @@ export default function Frame({ project, position, rotation, onClick, isActive }
   const frameRef = useRef()
   useCursor(hovered)
 
+  const { viewport } = useThree()
+  const isMobile = viewport.width < 10
   const texture = project.image ? useTexture(project.image) : null
 
   // Smooth hover animation for the light/scale using useFrame
@@ -78,13 +80,13 @@ export default function Frame({ project, position, rotation, onClick, isActive }
       <group position={[0, -2.5, 0]}>
         {/* Dark background pill for text legibility */}
         <mesh position={[0, -0.2, -0.05]}>
-          <planeGeometry args={[3.5, 1]} />
+          <planeGeometry args={[isMobile ? 2.8 : 3.5, 0.8]} />
           <meshBasicMaterial color="#000000" transparent opacity={0.6} depthWrite={false} />
         </mesh>
 
         <Text
           position={[0, 0.1, 0]}
-          fontSize={0.35}
+          fontSize={isMobile ? 0.25 : 0.35}
           color="#ffffff"
           anchorX="center"
           anchorY="middle"
@@ -95,11 +97,11 @@ export default function Frame({ project, position, rotation, onClick, isActive }
         </Text>
         <Text
           position={[0, -0.3, 0]}
-          fontSize={0.18}
+          fontSize={isMobile ? 0.14 : 0.18}
           color="#f1f5f9"
           anchorX="center"
           anchorY="middle"
-          maxWidth={3}
+          maxWidth={isMobile ? 2.5 : 3}
           textAlign="center"
           outlineWidth={0.01}
           outlineColor="#000000"

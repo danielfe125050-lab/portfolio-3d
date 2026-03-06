@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Environment, MeshReflectorMaterial, CameraControls, ContactShadows, Text, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
@@ -7,6 +7,8 @@ import Frame from './Frame'
 
 export default function Scene({ active, setActive, projects }) {
     const controlsRef = useRef()
+    const { viewport } = useThree()
+    const isMobile = viewport.width < 10
 
     // Layout configuration
     const radius = 8
@@ -48,7 +50,7 @@ export default function Scene({ active, setActive, projects }) {
         } else {
             // Reset to general view
             controlsRef.current.setLookAt(
-                0, 2, 8, // Camera position
+                0, isMobile ? 3 : 2, isMobile ? 12 : 8, // Camera position (Zoomed out on mobile)
                 0, 1, -5, // Look at target
                 true // animate
             )
@@ -67,7 +69,7 @@ export default function Scene({ active, setActive, projects }) {
                 ref={controlsRef}
                 minPolarAngle={Math.PI / 4}
                 maxPolarAngle={Math.PI / 2}
-                maxDistance={15}
+                maxDistance={25}
                 makeDefault
             />
 
@@ -92,7 +94,7 @@ export default function Scene({ active, setActive, projects }) {
             <group position={[0, -1.9, -1.5]} rotation={[-Math.PI / 2.5, 0, 0]} visible={active === null}>
                 <Text
                     position={[0, 0, 0]}
-                    fontSize={0.9}
+                    fontSize={isMobile ? 0.5 : 0.9}
                     color="#ffffff"
                     anchorX="center"
                     anchorY="middle"
@@ -105,8 +107,8 @@ export default function Scene({ active, setActive, projects }) {
                 </Text>
 
                 <Text
-                    position={[0, -0.6, 0]}
-                    fontSize={0.2}
+                    position={[0, isMobile ? -0.4 : -0.6, 0]}
+                    fontSize={isMobile ? 0.12 : 0.2}
                     color="#a1a1aa"
                     anchorX="center"
                     anchorY="middle"
