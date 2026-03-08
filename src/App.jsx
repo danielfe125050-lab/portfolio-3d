@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Loader } from '@react-three/drei'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useRef, useEffect } from 'react'
 import Scene from './components/Scene'
 import Overlay from './components/Overlay'
 
@@ -14,6 +14,25 @@ const PROJECTS = [
 
 function App() {
   const [active, setActive] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef(null)
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+      } else {
+        audioRef.current.play()
+      }
+      setIsPlaying(!isPlaying)
+    }
+  }
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.2 // Background ambient volume
+    }
+  }, [])
 
   return (
     <>
@@ -170,9 +189,33 @@ function App() {
         </div>
       )}
 
+      {/* Audio Element */}
+      <audio ref={audioRef} loop src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3" />
+
       {/* Floating CTA Buttons */}
       {active === null && (
         <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[50] flex flex-col gap-4">
+
+          {/* Music Toggle Button */}
+          <button
+            onClick={toggleAudio}
+            className="group relative flex justify-end outline-none"
+          >
+            <div className={`absolute inset-0 rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity ${isPlaying ? 'bg-fuchsia-400' : 'bg-neutral-500'}`}></div>
+            <div className={`relative hover:scale-110 transition-transform duration-300 text-white p-3 md:p-4 rounded-full shadow-2xl flex items-center justify-center ${isPlaying ? 'bg-gradient-to-tr from-fuchsia-600 to-fuchsia-400 shadow-fuchsia-900/50' : 'bg-gradient-to-tr from-neutral-600 to-neutral-500 shadow-neutral-900/50'}`}>
+              {isPlaying ? (
+                // Pause Icon
+                <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+              ) : (
+                // Play Icon
+                <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+              )}
+            </div>
+            {/* Tooltip */}
+            <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-neutral-900/90 text-white px-3 py-1.5 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none backdrop-blur-sm border border-white/10">
+              {isPlaying ? 'Pausar Música' : 'Reproducir Música Ambiente'}
+            </span>
+          </button>
 
           {/* Email Button */}
           <a

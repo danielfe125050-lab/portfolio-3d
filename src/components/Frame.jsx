@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Text, useCursor, useTexture, Html, RoundedBox, Image } from '@react-three/drei'
+import { Text, useCursor, useTexture, Html, RoundedBox, Image, Float } from '@react-three/drei'
 import * as THREE from 'three'
 import { playHoverSound, playClickSound } from '../utils/audio'
 
 export default function Frame({ project, position, rotation, onClick, isActive }) {
   const [hovered, setHovered] = useState(false)
   const frameRef = useRef()
+  const innerRef = useRef()
   useCursor(hovered)
 
   const { viewport } = useThree()
@@ -23,105 +24,125 @@ export default function Frame({ project, position, rotation, onClick, isActive }
       const targetScale = isActive ? 1.05 : hovered ? 1.02 : 1
       frameRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1)
     }
+
+    if (innerRef.current) {
+      if (isActive && !isMobile) {
+        // Parallax effect only when active and on desktop
+        const targetX = state.pointer.x * 0.3
+        const targetY = state.pointer.y * 0.3
+        innerRef.current.position.x = THREE.MathUtils.lerp(innerRef.current.position.x, targetX, 0.1)
+        innerRef.current.position.y = THREE.MathUtils.lerp(innerRef.current.position.y, targetY, 0.1)
+      } else {
+        // Reset parallax
+        innerRef.current.position.x = THREE.MathUtils.lerp(innerRef.current.position.x, 0, 0.1)
+        innerRef.current.position.y = THREE.MathUtils.lerp(innerRef.current.position.y, 0, 0.1)
+      }
+    }
   })
 
   return (
-    <group position={position} rotation={rotation} ref={frameRef}>
-      <mesh
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-          if (!isActive) playHoverSound();
-        }}
-        onPointerOut={() => setHovered(false)}
-        onClick={(e) => {
-          e.stopPropagation()
-          if (!isActive) playClickSound();
-          onClick()
-        }}
-        visible={false} // Invisible hit box
-        position={[0, 0, 0]}
-      >
-        <boxGeometry args={[3.2, 4.2, 0.4]} />
-        <meshBasicMaterial depthWrite={false} color="red" />
-      </mesh>
+    <group position={position} rotation={rotation}>
+      <Float floatIntensity={isActive ? 0 : 1.5} rotationIntensity={isActive ? 0 : 0.5} speed={isActive ? 0 : 2.5}>
+        <group ref={frameRef}>
+          <group ref={innerRef}>
+            <mesh
+              onPointerOver={(e) => {
+                e.stopPropagation();
+                setHovered(true);
+                if (!isActive) playHoverSound();
+              }}
+              onPointerOut={() => setHovered(false)}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!isActive) playClickSound();
+                onClick()
+              }}
+              visible={false} // Invisible hit box
+              position={[0, 0, 0]}
+            >
+              <boxGeometry args={[3.2, 4.2, 0.4]} />
+              <meshBasicMaterial depthWrite={false} color="red" />
+            </mesh>
 
-      {/* The Frame border - Now with Rounded Corners! */}
-      <RoundedBox args={[3.2, 4.2, 0.2]} radius={0.15} smoothness={4} position={[0, 0, 0]}>
-        <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} />
-      </RoundedBox>
+            {/* The Frame border - Now with Rounded Corners! */}
+            <RoundedBox args={[3.2, 4.2, 0.2]} radius={0.15} smoothness={4} position={[0, 0, 0]}>
+              <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} />
+            </RoundedBox>
 
-      {/* Emissive glow around the screen. */}
-      {/* Positioned at Z=0.05, with depth 0.1, the front face is Z=0.1. The screen is at Z=0.11, so it sits clearly in front. */}
-      <mesh position={[0, 0, 0.05]}>
-        <boxGeometry args={[3.1, 4.1, 0.1]} />
-        <meshStandardMaterial
-          color={project.color}
-          emissive={project.color}
-          emissiveIntensity={hovered || isActive ? 2 : 0.5}
-          transparent
-          opacity={0.8}
-        />
-      </mesh>
+            {/* Emissive glow around the screen. */}
+            {/* Positioned at Z=0.05, with depth 0.1, the front face is Z=0.1. The screen is at Z=0.11, so it sits clearly in front. */}
+            <mesh position={[0, 0, 0.05]}>
+              <boxGeometry args={[3.1, 4.1, 0.1]} />
+              <meshStandardMaterial
+                color={project.color}
+                emissive={project.color}
+                emissiveIntensity={hovered || isActive ? 2 : 0.5}
+                transparent
+                opacity={0.8}
+              />
+            </mesh>
 
-      {/* The Screen */}
-      <group position={[0, 0, 0.11]}>
-        {project.isPricing ? (
-          <RoundedBox args={[3, 4, 0.02]} radius={0.1} smoothness={4}>
-            <meshBasicMaterial color="#111111" />
-          </RoundedBox>
-        ) : (
-          project.image ? (
-            <Image url={project.image} scale={[3, 4]} radius={0.1} position={[0, 0, 0]} toneMapped={false} />
-          ) : null
-        )}
-      </group>
+            {/* The Screen */}
+            <group position={[0, 0, 0.11]}>
+              {project.isPricing ? (
+                <RoundedBox args={[3, 4, 0.02]} radius={0.1} smoothness={4}>
+                  <meshBasicMaterial color="#111111" />
+                </RoundedBox>
+              ) : (
+                project.image ? (
+                  <Image url={project.image} scale={[3, 4]} radius={0.1} position={[0, 0, 0]} toneMapped={false} />
+                ) : null
+              )}
+            </group>
 
-      {/* Internal Text for Pricing Card */}
-      {project.isPricing && (
-        <group position={[0, 0, 0.13]}>
-          <Text fontSize={0.5} position={[0, 0.4, 0]} color="#fbbf24" anchorX="center" anchorY="middle" letterSpacing={0.05} font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfAZ9hjp-Ek-_EeA.woff">
-            SERVICIOS
-          </Text>
-          <Text fontSize={0.2} position={[0, -0.2, 0]} color="#ffffff" anchorX="center" anchorY="middle" letterSpacing={0.1}>
-            Y PLANES VIP
-          </Text>
+            {/* Internal Text for Pricing Card */}
+            {project.isPricing && (
+              <group position={[0, 0, 0.13]}>
+                <Text fontSize={0.5} position={[0, 0.4, 0]} color="#fbbf24" anchorX="center" anchorY="middle" letterSpacing={0.05} font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfAZ9hjp-Ek-_EeA.woff">
+                  SERVICIOS
+                </Text>
+                <Text fontSize={0.2} position={[0, -0.2, 0]} color="#ffffff" anchorX="center" anchorY="middle" letterSpacing={0.1}>
+                  Y PLANES VIP
+                </Text>
+              </group>
+            )}
+
+            {/* Project details floating below the frame */}
+            <group position={[0, isMobile && isActive ? -2.2 : -2.5, 0]}>
+              {/* Dark background pill for text legibility */}
+              {/* Make the pill smaller on mobile so it takes up less space */}
+              <RoundedBox args={[isMobile ? (isActive ? 2.4 : 2.8) : 3.5, isMobile ? (isActive ? 0.6 : 0.8) : 0.8, 0.05]} radius={0.15} position={[0, isMobile && isActive ? -0.1 : -0.2, -0.05]}>
+                <meshBasicMaterial color="#000000" transparent opacity={0.6} depthWrite={false} />
+              </RoundedBox>
+
+              <Text
+                position={[0, isMobile && isActive ? 0.05 : 0.1, 0]}
+                fontSize={isMobile ? (isActive ? 0.18 : 0.25) : 0.35}
+                color="#ffffff"
+                anchorX="center"
+                anchorY="middle"
+                outlineWidth={0.015}
+                outlineColor="#000000"
+              >
+                {project.name}
+              </Text>
+              <Text
+                position={[0, isMobile && isActive ? -0.2 : -0.3, 0]}
+                fontSize={isMobile ? (isActive ? 0.11 : 0.14) : 0.18}
+                color="#f1f5f9"
+                anchorX="center"
+                anchorY="middle"
+                maxWidth={isMobile ? 2.2 : 3}
+                textAlign="center"
+                outlineWidth={0.01}
+                outlineColor="#000000"
+              >
+                {project.description}
+              </Text>
+            </group>
+          </group>
         </group>
-      )}
-
-      {/* Project details floating below the frame */}
-      <group position={[0, isMobile && isActive ? -2.2 : -2.5, 0]}>
-        {/* Dark background pill for text legibility */}
-        {/* Make the pill smaller on mobile so it takes up less space */}
-        <RoundedBox args={[isMobile ? (isActive ? 2.4 : 2.8) : 3.5, isMobile ? (isActive ? 0.6 : 0.8) : 0.8, 0.05]} radius={0.15} position={[0, isMobile && isActive ? -0.1 : -0.2, -0.05]}>
-          <meshBasicMaterial color="#000000" transparent opacity={0.6} depthWrite={false} />
-        </RoundedBox>
-
-        <Text
-          position={[0, isMobile && isActive ? 0.05 : 0.1, 0]}
-          fontSize={isMobile ? (isActive ? 0.18 : 0.25) : 0.35}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.015}
-          outlineColor="#000000"
-        >
-          {project.name}
-        </Text>
-        <Text
-          position={[0, isMobile && isActive ? -0.2 : -0.3, 0]}
-          fontSize={isMobile ? (isActive ? 0.11 : 0.14) : 0.18}
-          color="#f1f5f9"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={isMobile ? 2.2 : 3}
-          textAlign="center"
-          outlineWidth={0.01}
-          outlineColor="#000000"
-        >
-          {project.description}
-        </Text>
-      </group>
+      </Float>
     </group>
   )
 }

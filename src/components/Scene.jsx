@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Environment, MeshReflectorMaterial, CameraControls, ContactShadows, Text, Stars, RoundedBox } from '@react-three/drei'
+import { Environment, MeshReflectorMaterial, CameraControls, ContactShadows, Text, Stars, RoundedBox, Sparkles, Float } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import Frame from './Frame'
@@ -163,6 +163,30 @@ export default function Scene({ active, setActive, projects }) {
             <spotLight position={[0, 10, 0]} intensity={1} penumbra={1} angle={0.8} />
             <Environment preset="city" />
             <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+            <Sparkles count={200} scale={25} size={isMobile ? 1.5 : 3} speed={0.4} opacity={0.4} noise={0.2} color="#ffffff" position={[0, 2, -5]} />
+
+            {/* 3D Contact CTA (Visible only in general view) */}
+            {active === null && (
+                <Float speed={2.5} rotationIntensity={0.2} floatIntensity={1} position={[0, isMobile ? 3 : 2.5, isMobile ? 5 : 4]}>
+                    <group
+                        onClick={() => window.open('https://wa.me/573116445034', '_blank')}
+                        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
+                        onPointerOut={() => document.body.style.cursor = 'auto'}
+                    >
+                        {/* Glow behind button */}
+                        <RoundedBox args={[isMobile ? 3.1 : 4.1, isMobile ? 0.9 : 1.1, 0.05]} radius={0.2} position={[0, 0, -0.05]}>
+                            <meshStandardMaterial color="#10b981" emissive="#10b981" emissiveIntensity={0.6} transparent opacity={0.6} />
+                        </RoundedBox>
+                        {/* Glass button */}
+                        <RoundedBox args={[isMobile ? 3 : 4, isMobile ? 0.8 : 1, 0.1]} radius={0.2} smoothness={4} position={[0, 0, 0]}>
+                            <meshStandardMaterial color="#052e16" metalness={0.8} roughness={0.2} />
+                        </RoundedBox>
+                        <Text position={[0, 0, 0.06]} fontSize={isMobile ? 0.25 : 0.3} color="#ffffff" anchorX="center" anchorY="middle" letterSpacing={0.05} font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfAZ9hjp-Ek-_EeA.woff">
+                            INICIAR PROYECTO
+                        </Text>
+                    </group>
+                </Float>
+            )}
 
             <EffectComposer disableNormalPass>
                 <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} />
