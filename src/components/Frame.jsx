@@ -46,9 +46,14 @@ export default function Frame({ project, position, rotation, onClick, isActive }
         <meshBasicMaterial depthWrite={false} color="red" />
       </mesh>
 
-      {/* Emissive glow around the screen. Put behind the frame */}
-      <mesh position={[0, 0, -0.05]}>
-        <boxGeometry args={[3.3, 4.3, 0.1]} />
+      {/* The Frame border - Now with Rounded Corners! */}
+      <RoundedBox args={[3.2, 4.2, 0.2]} radius={0.15} smoothness={4} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} />
+      </RoundedBox>
+
+      {/* Emissive glow around the screen. */}
+      <mesh position={[0, 0, 0.1]}>
+        <boxGeometry args={[3.1, 4.1, 0.1]} />
         <meshStandardMaterial
           color={project.color}
           emissive={project.color}
@@ -57,11 +62,6 @@ export default function Frame({ project, position, rotation, onClick, isActive }
           opacity={0.8}
         />
       </mesh>
-
-      {/* The Frame border - Now with Rounded Corners! */}
-      <RoundedBox args={[3.2, 4.2, 0.2]} radius={0.15} smoothness={4} position={[0, 0, 0]}>
-        <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} />
-      </RoundedBox>
 
       {/* The Screen */}
       <group position={[0, 0, 0.11]}>
