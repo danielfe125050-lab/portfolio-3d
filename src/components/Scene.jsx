@@ -167,7 +167,7 @@ export default function Scene({ active, setActive, projects }) {
 
             {/* 3D Contact CTA (Visible only in general view) */}
             {active === null && (
-                <Float speed={2.5} rotationIntensity={0.2} floatIntensity={1} position={[0, isMobile ? 3 : 2.5, isMobile ? 5 : 4]}>
+                <Float speed={2.5} rotationIntensity={0.2} floatIntensity={1} position={[isMobile ? 3.5 : 5, isMobile ? 3 : 2.5, isMobile ? 3 : 2]}>
                     <group
                         onClick={() => window.open('https://wa.me/573116445034', '_blank')}
                         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
