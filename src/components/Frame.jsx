@@ -52,7 +52,8 @@ export default function Frame({ project, position, rotation, onClick, isActive }
       </RoundedBox>
 
       {/* Emissive glow around the screen. */}
-      <mesh position={[0, 0, 0.1]}>
+      {/* Positioned at Z=0.05, with depth 0.1, the front face is Z=0.1. The screen is at Z=0.11, so it sits clearly in front. */}
+      <mesh position={[0, 0, 0.05]}>
         <boxGeometry args={[3.1, 4.1, 0.1]} />
         <meshStandardMaterial
           color={project.color}

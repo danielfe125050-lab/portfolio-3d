@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Environment, MeshReflectorMaterial, CameraControls, ContactShadows, Text, Stars } from '@react-three/drei'
+import { Environment, MeshReflectorMaterial, CameraControls, ContactShadows, Text, Stars, RoundedBox } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import Frame from './Frame'
@@ -92,18 +92,27 @@ export default function Scene({ active, setActive, projects }) {
 
             {/* 3D Typography on the floor */}
             <group position={[0, -1.9, -1.5]} rotation={[-Math.PI / 2.5, 0, 0]} visible={active === null}>
+                {/* Glowing Premium Base */}
+                <RoundedBox args={[isMobile ? 5 : 8, isMobile ? 1.5 : 2.2, 0.05]} radius={0.15} position={[0, isMobile ? -0.1 : -0.2, -0.1]}>
+                    <meshStandardMaterial color="#080812" metalness={0.8} roughness={0.2} transparent opacity={0.85} />
+                </RoundedBox>
+                {/* Thin emissive border behind the base */}
+                <RoundedBox args={[isMobile ? 5.1 : 8.15, isMobile ? 1.6 : 2.35, 0.02]} radius={0.18} position={[0, isMobile ? -0.1 : -0.2, -0.12]}>
+                    <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={0.6} transparent opacity={0.8} />
+                </RoundedBox>
+
                 <Text
                     position={[0, 0, 0]}
-                    fontSize={isMobile ? 0.5 : 0.9}
+                    fontSize={isMobile ? 0.45 : 0.9}
                     color="#ffffff"
                     anchorX="center"
                     anchorY="middle"
                     letterSpacing={-0.02}
-                    opacity={0.8}
+                    opacity={0.9}
                     transparent
                 >
                     DISEÑO WEB QUE VENDE
-                    <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.2} transparent opacity={0.6} />
+                    <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.3} transparent opacity={0.8} />
                 </Text>
 
                 <Text
