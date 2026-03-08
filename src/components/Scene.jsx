@@ -37,10 +37,11 @@ export default function Scene({ active, setActive, projects }) {
             const [px, py, pz] = calculatePosition(index, projects.length)
 
             // Move camera close to the frame
-            // We push the camera out along the normal vector by 5 units
+            // We push the camera out along the normal vector by a closer amount on mobile
             const angle = (index / (projects.length - 1)) * angleSpread - (angleSpread / 2);
-            const cx = Math.sin(angle) * (radius - 5)
-            const cz = Math.cos(angle) * -(radius - 5)
+            const zoomOutDistance = isMobile ? 4 : 5; // Closer on mobile so frame takes more screen space
+            const cx = Math.sin(angle) * (radius - zoomOutDistance)
+            const cz = Math.cos(angle) * -(radius - zoomOutDistance)
 
             controlsRef.current.setLookAt(
                 cx, py, cz, // Camera position
@@ -69,7 +70,7 @@ export default function Scene({ active, setActive, projects }) {
                 ref={controlsRef}
                 minPolarAngle={Math.PI / 4}
                 maxPolarAngle={Math.PI / 2}
-                maxDistance={25}
+                maxDistance={isMobile ? 35 : 25} // Allow more zoom out on mobile
                 makeDefault
             />
 

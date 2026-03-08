@@ -90,15 +90,16 @@ export default function Frame({ project, position, rotation, onClick, isActive }
       )}
 
       {/* Project details floating below the frame */}
-      <group position={[0, -2.5, 0]}>
+      <group position={[0, isMobile && isActive ? -2.2 : -2.5, 0]}>
         {/* Dark background pill for text legibility */}
-        <RoundedBox args={[isMobile ? 2.8 : 3.5, 0.8, 0.05]} radius={0.15} position={[0, -0.2, -0.05]}>
+        {/* Make the pill smaller on mobile so it takes up less space */}
+        <RoundedBox args={[isMobile ? (isActive ? 2.4 : 2.8) : 3.5, isMobile ? (isActive ? 0.6 : 0.8) : 0.8, 0.05]} radius={0.15} position={[0, isMobile && isActive ? -0.1 : -0.2, -0.05]}>
           <meshBasicMaterial color="#000000" transparent opacity={0.6} depthWrite={false} />
         </RoundedBox>
 
         <Text
-          position={[0, 0.1, 0]}
-          fontSize={isMobile ? 0.25 : 0.35}
+          position={[0, isMobile && isActive ? 0.05 : 0.1, 0]}
+          fontSize={isMobile ? (isActive ? 0.18 : 0.25) : 0.35}
           color="#ffffff"
           anchorX="center"
           anchorY="middle"
@@ -108,12 +109,12 @@ export default function Frame({ project, position, rotation, onClick, isActive }
           {project.name}
         </Text>
         <Text
-          position={[0, -0.3, 0]}
-          fontSize={isMobile ? 0.14 : 0.18}
+          position={[0, isMobile && isActive ? -0.2 : -0.3, 0]}
+          fontSize={isMobile ? (isActive ? 0.11 : 0.14) : 0.18}
           color="#f1f5f9"
           anchorX="center"
           anchorY="middle"
-          maxWidth={isMobile ? 2.5 : 3}
+          maxWidth={isMobile ? 2.2 : 3}
           textAlign="center"
           outlineWidth={0.01}
           outlineColor="#000000"
