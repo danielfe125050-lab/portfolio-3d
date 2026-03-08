@@ -121,7 +121,7 @@ function App() {
               <div className="flex-1 w-full flex flex-col md:flex-row relative bg-neutral-900 border-t border-white/5">
 
                 {/* Iframe Workspace (Left side) */}
-                <div className="flex-1 relative bg-white flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10 h-[50vh] md:h-auto">
+                <div className="flex-1 relative bg-white flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10 h-[65vh] md:h-auto">
                   <div className="absolute flex flex-col items-center gap-4 opacity-50 bg-neutral-900 p-8 rounded-xl z-0">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
                     <p className="text-white text-sm">Cargando...</p>
@@ -134,29 +134,29 @@ function App() {
                 </div>
 
                 {/* Sales Panel (Right side) */}
-                <div className="w-full md:w-80 lg:w-96 bg-neutral-800/80 p-6 md:p-8 flex flex-col gap-8 overflow-y-auto">
+                <div className="w-full md:w-80 lg:w-96 bg-neutral-800/80 p-4 md:p-8 flex flex-col gap-4 md:gap-8 overflow-y-auto shrink-0">
 
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2 md:mb-3">
                       <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                       <h4 className="text-white/60 text-xs font-bold uppercase tracking-widest">El Problema</h4>
                     </div>
-                    <p className="text-white/90 text-sm leading-relaxed">{PROJECTS.find(p => p.id === active)?.challenge}</p>
+                    <p className="text-white/90 text-[13px] md:text-sm leading-relaxed">{PROJECTS.find(p => p.id === active)?.challenge}</p>
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2 md:mb-3">
                       <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                       <h4 className="text-white/60 text-xs font-bold uppercase tracking-widest">La Solución</h4>
                     </div>
-                    <p className="text-white/90 text-sm leading-relaxed">{PROJECTS.find(p => p.id === active)?.solution}</p>
+                    <p className="text-white/90 text-[13px] md:text-sm leading-relaxed">{PROJECTS.find(p => p.id === active)?.solution}</p>
                   </div>
 
-                  <div className="mt-auto pt-6 border-t border-white/10">
-                    <h4 className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-3">Tecnologías Clave</h4>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mt-auto pt-4 md:pt-6 border-t border-white/10">
+                    <h4 className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-2 md:mb-3">Tecnologías Clave</h4>
+                    <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {PROJECTS.find(p => p.id === active)?.tech.map((t, i) => (
-                        <span key={i} className="text-xs font-medium bg-black/40 border border-white/5 text-white/80 px-3 py-1.5 rounded-md hover:bg-white/10 transition-colors cursor-default">
+                        <span key={i} className="text-[10px] md:text-xs font-medium bg-black/40 border border-white/5 text-white/80 px-2 py-1 md:px-3 md:py-1.5 rounded-md hover:bg-white/10 transition-colors cursor-default">
                           {t}
                         </span>
                       ))}
