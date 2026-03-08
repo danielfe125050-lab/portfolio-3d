@@ -88,35 +88,34 @@ export default function Frame({ project, position, rotation, onClick, isActive }
         </group>
       )}
 
-      {/* Project details floating below the frame - Card style */}
-      <group position={[0, isMobile ? -2.7 : -2.8, 0.1]}>
-        {/* Decorative text card outline */}
-        <RoundedBox args={[isMobile ? 3.05 : 3.65, isMobile ? 1.05 : 1.25, 0.02]} radius={0.16} position={[0, 0, -0.01]}>
-          <meshStandardMaterial color={project.color} emissive={project.color} emissiveIntensity={0.6} />
-        </RoundedBox>
-
-        {/* Text card background */}
-        <RoundedBox args={[isMobile ? 3.0 : 3.6, isMobile ? 1.0 : 1.2, 0.05]} radius={0.15} position={[0, 0, 0]}>
-          <meshStandardMaterial color="#0a0a1a" metalness={0.6} roughness={0.2} transparent opacity={0.95} />
+      {/* Project details floating below the frame */}
+      <group position={[0, -2.5, 0]}>
+        {/* Dark background pill for text legibility */}
+        <RoundedBox args={[isMobile ? 2.8 : 3.5, 0.8, 0.05]} radius={0.15} position={[0, -0.2, -0.05]}>
+          <meshBasicMaterial color="#000000" transparent opacity={0.6} depthWrite={false} />
         </RoundedBox>
 
         <Text
-          position={[0, 0.2, 0.03]}
-          fontSize={isMobile ? 0.22 : 0.28}
+          position={[0, 0.1, 0]}
+          fontSize={isMobile ? 0.25 : 0.35}
           color="#ffffff"
           anchorX="center"
           anchorY="middle"
+          outlineWidth={0.015}
+          outlineColor="#000000"
         >
           {project.name}
         </Text>
         <Text
-          position={[0, -0.2, 0.03]}
-          fontSize={isMobile ? 0.12 : 0.15}
-          color="#cbd5e1"
+          position={[0, -0.3, 0]}
+          fontSize={isMobile ? 0.14 : 0.18}
+          color="#f1f5f9"
           anchorX="center"
           anchorY="middle"
-          maxWidth={isMobile ? 2.8 : 3.3}
+          maxWidth={isMobile ? 2.5 : 3}
           textAlign="center"
+          outlineWidth={0.01}
+          outlineColor="#000000"
         >
           {project.description}
         </Text>
